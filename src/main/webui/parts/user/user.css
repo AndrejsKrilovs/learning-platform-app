@@ -78,3 +78,8 @@ body {
 .login_form button:hover {
     background: #12876f;
 }
+.login_form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
