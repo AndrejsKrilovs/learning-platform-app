@@ -3,31 +3,27 @@ let passwordValue = ``
 
 const isEmptyString = (stringElement) => (!stringElement?.trim().length)
 
+const hidingLoginButton = () => {
+  const loginBtn = document.querySelector('#login')
+  if (loginValue && passwordValue) {
+    loginBtn.removeAttribute('disabled')
+  }
+  else {
+    loginBtn.setAttribute('disabled', 'disabled')
+  }
+}
+
 const getLogin = () => {
   document.querySelector('#username').addEventListener('input', (event) => {
     loginValue = !isEmptyString(event.target.value) ? event.target.value : ``
-
-    const loginBtn = document.querySelector('#login')
-    if (loginValue && passwordValue) {
-      loginBtn.removeAttribute('disabled')
-    }
-    else {
-      loginBtn.setAttribute('disabled', 'disabled')
-    }
+    hidingLoginButton()
   })
 }
 
 const getPassword = () => {
   document.querySelector('#password').addEventListener('input', (event) => {
     passwordValue = !isEmptyString(event.target.value) ? event.target.value : ``
-
-    const loginBtn = document.querySelector('#login')
-    if (loginValue && passwordValue) {
-      loginBtn.removeAttribute('disabled')
-    }
-    else {
-      loginBtn.setAttribute('disabled', 'disabled')
-    }
+    hidingLoginButton()
   })
 }
 
