@@ -19,6 +19,10 @@ class UserResourceTest {
       .add("password", "password")
       .build();
 
+    JsonObject response = Json.createObjectBuilder()
+      .add("login", "username")
+      .build();
+
     RestAssured.given()
         .contentType(MediaType.APPLICATION_JSON)
         .body(request.toString())
@@ -26,7 +30,7 @@ class UserResourceTest {
         .post("/users/login")
       .then()
         .statusCode(Response.Status.OK.getStatusCode())
-        .body(Matchers.is("username"));
+        .body(Matchers.is(response.toString()));
   }
 
   @Test

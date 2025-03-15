@@ -9,19 +9,21 @@ import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.exception.LoginException;
 import krilovs.andrejs.service.UserService;
 
+import java.util.Map;
+
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
-    @Inject
-    private UserService userService;
+  @Inject
+  private UserService userService;
 
-    @POST
-    @Path("/login")
-    public String login(UserDomain credentials) {
-        if (userService.authenticateUser(credentials)) {
-            return credentials.login();
-        }
-
-        throw new LoginException("#login", "Incorrect credentials, try again");
+  @POST
+  @Path("/login")
+  public Map<String, String> login(UserDomain credentials) {
+    if (userService.authenticateUser(credentials)) {
+      return Map.of("login", credentials.login());
     }
+
+    throw new LoginException("#login", "Incorrect credentials, try again");
+  }
 }
