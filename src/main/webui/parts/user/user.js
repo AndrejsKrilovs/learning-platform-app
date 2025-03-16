@@ -1,3 +1,6 @@
+import './user.css'
+import { renderMainTemplate, addMenuItems } from './../template/template.js'
+
 let loginValue = ``
 let passwordValue = ``
 
@@ -56,7 +59,8 @@ export const setupLogin = () => {
     .then(data => {
       clearFormData()
       if(data.login) {
-        console.log(data.login)
+        document.querySelector("#app").innerHTML = renderMainTemplate(data.login)
+        addMenuItems()
       }
       else {
         document.querySelector("#incorrectCredentials").innerText = data.errorMessage
@@ -67,6 +71,7 @@ export const setupLogin = () => {
 
 export const renderLoginForm = () => {
   return `
+    <div id="loginPage">
     <div class="login_form">
       <h3>Please login before continue</h3>
       <span id="incorrectCredentials"></span>
@@ -82,6 +87,7 @@ export const renderLoginForm = () => {
       </div>
 
       <button id="login" type="button" disabled>Login</button>
+    </div>
     </div>
   `
 }

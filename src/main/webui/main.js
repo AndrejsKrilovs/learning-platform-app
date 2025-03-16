@@ -1,4 +1,3 @@
-import './parts/user/user.css'
 import {
   setupLogin,
   renderLoginForm
