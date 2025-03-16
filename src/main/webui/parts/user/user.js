@@ -3,8 +3,37 @@ import { renderMainTemplate, addMenuItems } from './../template/template.js'
 
 let loginValue = ``
 let passwordValue = ``
+const loginFormInputComponents = [
+  {
+    id : 'username',
+    label: 'Username',
+    type: 'text',
+    placeholder : 'Username required'
+  },
+  {
+    id : 'password',
+    label: 'Password',
+    type: 'password',
+    placeholder : 'Password required'
+  }
+]
 
 const isEmptyString = (stringElement) => (!stringElement?.trim().length)
+
+const renderSingleInput = (singleItem, parentElement) => {
+  const newElement = document.createElement('div')
+  newElement.setAttribute('class', 'input_box')
+  newElement.innerHTML = `
+    <label for="${singleItem.id}">${singleItem.label}</label>
+    <input type="${singleItem.type}" id="${singleItem.id}" placeholder="${singleItem.placeholder}" />
+  `
+  parentElement.appendChild(newElement)
+}
+
+const generateInputFields = (componentItemList) => {
+  const inputItems = document.querySelector('#inputItems')
+  componentItemList.forEach(value => renderSingleInput(value, inputItems))
+}
 
 const hidingLoginButton = () => {
   document.querySelector("#incorrectCredentials").innerText = ``
@@ -39,34 +68,40 @@ const clearFormData = () => {
   hidingLoginButton()
 }
 
-export const setupLogin = () => {
-  getLogin()
-  getPassword()
-
-  const loginBtn = document.querySelector('#login')
-  loginBtn.addEventListener('click', () => {
-    fetch('http://localhost:8080/users/login', {
-      method: 'POST',
+const loginRequest = async (lg, pwd) => {
+  return await fetch('http://localhost:8080/users/login', {
+    method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+
       body: JSON.stringify({
-        login: loginValue,
-        password: passwordValue
+        login: lg,
+        password: pwd
       })
+  }).then(resp => resp.json())
+}
+
+const renderingAfterLogin = (data) => {
+  clearFormData()
+  if(data.login) {
+    document.querySelector("#app").innerHTML = renderMainTemplate(data.login)
+    addMenuItems()
+  }
+  else {
+    document.querySelector("#incorrectCredentials").innerText = data.errorMessage
+  }
+}
+
+export const setupLogin = () => {
+  generateInputFields(loginFormInputComponents)
+  getLogin()
+  getPassword()
+
+  document.querySelector('#login')
+    .addEventListener('click', () => {
+      loginRequest(loginValue, passwordValue).then(data => renderingAfterLogin(data))
     })
-    .then(res => res.json())
-    .then(data => {
-      clearFormData()
-      if(data.login) {
-        document.querySelector("#app").innerHTML = renderMainTemplate(data.login)
-        addMenuItems()
-      }
-      else {
-        document.querySelector("#incorrectCredentials").innerText = data.errorMessage
-      }
-    })
-  })
 }
 
 export const renderLoginForm = () => {
@@ -75,17 +110,7 @@ export const renderLoginForm = () => {
     <div class="login_form">
       <h3>Please login before continue</h3>
       <span id="incorrectCredentials"></span>
-
-      <div class="input_box">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Username required" required />
-      </div>
-
-      <div class="input_box">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password required" required />
-      </div>
-
+      <div id="inputItems"></div>
       <button id="login" type="button" disabled>Login</button>
     </div>
     </div>
