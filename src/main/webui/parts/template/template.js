@@ -1,4 +1,8 @@
 import './template.css'
+import {
+  setupLogin,
+  renderLoginForm
+} from './../user/user.js'
 
 const renderSingleItem = (singleItem, parentElement) => {
   const newElement = document.createElement('div')
@@ -13,10 +17,19 @@ const renderMenuItems = (responseItems) => {
     .forEach(value => renderSingleItem(value, itemListElement))
 }
 
+const logoutAction = () => {
+  document.querySelector('#logout')
+    .addEventListener('click', () => {
+      document.querySelector('#app').innerHTML = renderLoginForm()
+      setupLogin()
+    })
+}
+
 export const addMenuItems = () => {
   fetch('http://localhost:8080/menuItems')
     .then(response => response.json())
     .then(data => renderMenuItems(data))
+    logoutAction()
 }
 
 export const renderMainTemplate = (user) => {
@@ -25,7 +38,7 @@ export const renderMainTemplate = (user) => {
       <div class="container px-4 py-5" id="featured-3">
         <h2 class="pb-2 border-bottom">
           <span>Welcome ${user}</span>
-          <button class="btn btn-primary">Logout</button>
+          <button id="logout" class="btn btn-primary">Logout</button>
         </h2>
 
         <div id="menus" class="row g-4 py-5 row-cols-1 row-cols-md-3 row-cols-lg-6"/>
