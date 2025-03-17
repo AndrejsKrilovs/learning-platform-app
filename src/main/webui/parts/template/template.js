@@ -4,17 +4,8 @@ import {
   renderLoginForm
 } from './../user/user.js'
 
-const renderSingleItem = (singleItem, parentElement) => {
-  const newElement = document.createElement('div')
-  newElement.setAttribute('class', 'feature col')
-  newElement.innerHTML = singleItem
-  parentElement.appendChild(newElement)
-}
-
-const renderMenuItems = (responseItems) => {
-  const itemListElement = document.querySelector('#menus')
-  responseItems.map(element => `<h5 class="fs-12">${element.label}</h5>`)
-    .forEach(value => renderSingleItem(value, itemListElement))
+const itemClick = (event) => {
+  console.log(event.target.id)
 }
 
 const logoutAction = () => {
@@ -23,6 +14,21 @@ const logoutAction = () => {
       document.querySelector('#app').innerHTML = renderLoginForm()
       setupLogin()
     })
+}
+
+const renderMenuItems = (responseData) => {
+  for (let responseItem of responseData) {
+    const menuLink = document.createElement('h3')
+    menuLink.setAttribute('class', 'nav-link')
+    menuLink.setAttribute('id', `${responseItem.id}`)
+    menuLink.innerText = `${responseItem.label}`
+    menuLink.addEventListener('click', itemClick, false);
+
+    const menuItem = document.createElement('li')
+    menuItem.setAttribute('class', 'nav-item')
+    menuItem.appendChild(menuLink)
+    document.querySelector('#menus').appendChild(menuItem)
+  }
 }
 
 export const addMenuItems = () => {
@@ -35,13 +41,13 @@ export const addMenuItems = () => {
 export const renderMainTemplate = (user) => {
   return `
     <div id="mainTemplate">
-      <div class="container px-4 py-5" id="featured-3">
+      <div class="container px-4 py-5">
         <h2 class="pb-2 border-bottom">
           <span>Welcome ${user}</span>
           <button id="logout" class="btn btn-primary">Logout</button>
         </h2>
 
-        <div id="menus" class="row g-4 py-5 row-cols-1 row-cols-md-3 row-cols-lg-6"/>
+        <ul id="menus" class="nav nav-pills row g-4 py-5 row-cols-1 row-cols-md-3 row-cols-lg-6" />
       </div>
     </div>
   `

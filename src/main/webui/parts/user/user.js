@@ -89,7 +89,7 @@ const renderingAfterLogin = (data) => {
     addMenuItems()
   }
   else {
-    document.querySelector("#incorrectCredentials").innerText = data.errorMessage
+    document.querySelector("#incorrectCredentials").innerText = data.violations[0].message
   }
 }
 
