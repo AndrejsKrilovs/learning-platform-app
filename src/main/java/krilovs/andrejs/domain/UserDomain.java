@@ -1,9 +1,13 @@
 package krilovs.andrejs.domain;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Objects;
 
 public record UserDomain(
+  @NotBlank(message = "Username should be defined")
   String login,
+  @NotBlank(message = "Password should be defined")
   String password
 ) {
   @Override

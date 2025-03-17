@@ -1,6 +1,7 @@
 package krilovs.andrejs;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -19,11 +20,11 @@ public class UserResource {
 
   @POST
   @Path("/login")
-  public Map<String, String> login(UserDomain credentials) {
+  public Map<String, String> login(@Valid UserDomain credentials) {
     if (userService.authenticateUser(credentials)) {
       return Map.of("login", credentials.login());
     }
 
-    throw new LoginException("#login", "Incorrect credentials, try again");
+    throw new LoginException("login", "Incorrect credentials, try again");
   }
 }

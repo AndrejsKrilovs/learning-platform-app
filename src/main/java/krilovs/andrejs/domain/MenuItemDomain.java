@@ -1,7 +1,10 @@
 package krilovs.andrejs.domain;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class MenuItemDomain {
   private Long id;
+  @NotBlank(message = "Menu item should be defined")
   private String label;
 
   public MenuItemDomain(Long id, String label) {

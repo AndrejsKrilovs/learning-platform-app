@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 @QuarkusTest
 class UserResourceTest {
@@ -36,13 +35,19 @@ class UserResourceTest {
   @Test
   void loginTestFailed() {
     JsonObject request = Json.createObjectBuilder()
-      .add("login", Mockito.anyString())
-      .add("password", Mockito.anyString())
+      .add("login", "fake login")
+      .add("password", "fake password")
+      .build();
+
+    JsonObject errorMessagePart = Json.createObjectBuilder()
+      .add("method", "login")
+      .add("message", "Incorrect credentials, try again")
       .build();
 
     JsonObject response = Json.createObjectBuilder()
-      .add("methodName", "#login")
-      .add("errorMessage", "Incorrect credentials, try again")
+      .add("title", "Logging exception")
+      .add("status", Response.Status.BAD_REQUEST.getStatusCode())
+      .add("violations", Json.createArrayBuilder().add(errorMessagePart).build())
       .build();
 
     RestAssured.given()
@@ -51,7 +56,7 @@ class UserResourceTest {
       .when()
         .post("/users/login")
       .then()
-        .statusCode(Response.Status.OK.getStatusCode())
+        .statusCode(Response.Status.BAD_REQUEST.getStatusCode())
         .body(Matchers.is(response.toString()));
   }
 }

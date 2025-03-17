@@ -1,6 +1,7 @@
 package krilovs.andrejs;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -24,7 +25,7 @@ public class MenuItemResource {
 
   @POST
   @Path("/add")
-  public MenuItemDomain addMenuItem(String menuItem) {
-    return menuItemService.addMenuItem(menuItem);
+  public MenuItemDomain addMenuItem(@Valid MenuItemDomain menuItem) {
+    return menuItemService.addMenuItem(menuItem.getLabel());
   }
 }
