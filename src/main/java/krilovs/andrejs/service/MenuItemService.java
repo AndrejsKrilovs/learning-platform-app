@@ -8,10 +8,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
 public class MenuItemService {
-  private final List<MenuItemDomain> menuItems;
+  private List<MenuItemDomain> menuItems;
 
   public List<MenuItemDomain> getMenuItems() {
     return menuItems;
+  }
+
+  public void setMenuItems(List<MenuItemDomain> menuItems) {
+    this.menuItems = menuItems;
   }
 
   public MenuItemService() {

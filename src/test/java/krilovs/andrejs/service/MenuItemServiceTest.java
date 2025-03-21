@@ -20,6 +20,6 @@ class MenuItemServiceTest {
   @Test
   void addMenuItem() {
     MenuItemDomain result = menuItemService.addMenuItem(Mockito.anyString());
-    Assertions.assertNotNull(result.getId());
+    Assertions.assertNotNull(result.id());
   }
 }

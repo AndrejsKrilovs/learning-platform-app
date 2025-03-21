@@ -26,6 +26,6 @@ public class MenuItemResource {
   @POST
   @Path("/add")
   public MenuItemDomain addMenuItem(@Valid MenuItemDomain menuItem) {
-    return menuItemService.addMenuItem(menuItem.getLabel());
+    return menuItemService.addMenuItem(menuItem.label());
   }
 }
