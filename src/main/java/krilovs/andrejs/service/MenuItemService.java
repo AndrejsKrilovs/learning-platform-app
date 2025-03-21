@@ -3,19 +3,19 @@ package krilovs.andrejs.service;
 import jakarta.inject.Singleton;
 import krilovs.andrejs.domain.MenuItemDomain;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Singleton
 public class MenuItemService {
-  private final List<MenuItemDomain> menuItems = new ArrayList<>();
+  private final List<MenuItemDomain> menuItems;
 
   public List<MenuItemDomain> getMenuItems() {
     return menuItems;
   }
 
   public MenuItemService() {
+    menuItems = new CopyOnWriteArrayList<>();
     menuItems.add(new MenuItemDomain(1L, "Available courses"));
     menuItems.add(new MenuItemDomain(2L, "Taken learnings"));
     menuItems.add(new MenuItemDomain(3L, "Homeworks"));
