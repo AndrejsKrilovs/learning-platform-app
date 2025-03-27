@@ -13,6 +13,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Singleton
 public class CourseItemService {
+  /**
+   * Remove this constant after go live
+   */
+  public static final int TOTAL_FAKE_COURSE_ITEMS = 18;
   private final List<CourseItemDomain> courseItems;
   private final List<CourseItemDomain> userCourseItems;
   private final AtomicLong courseId;
@@ -29,9 +33,11 @@ public class CourseItemService {
     courseId = new AtomicLong();
     courseItems = new CopyOnWriteArrayList<>();
     userCourseItems = new CopyOnWriteArrayList<>();
+
+//    Remove this cycle and random property value after go live
     Random random = new Random();
 
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < TOTAL_FAKE_COURSE_ITEMS; i++) {
       long beginDate = LocalDate.now().toEpochDay();
       long endDate = LocalDate.now().plusYears(1L).toEpochDay();
 

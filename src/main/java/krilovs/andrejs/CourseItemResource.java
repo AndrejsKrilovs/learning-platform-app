@@ -55,9 +55,12 @@ public class CourseItemResource {
   @GET
   @Path("/take/{id}")
   public void takeCourse(@PathParam("id") Long courseId) {
-    if (service.getUserCourseItems().size() <= ITEM_COUNT_PER_PAGE) {
+    if (service.getUserCourseItems().size() < ITEM_COUNT_PER_PAGE) {
       service.takeCourse(courseId)
-        .orElseThrow(() -> new CourseException("Taking course exception", "takeCourse", "Cannot take this course"));
+        .orElseThrow(() -> new CourseException(
+          "Taking course exception",
+          "takeCourse",
+          "User cannot take more than %d courses".formatted(ITEM_COUNT_PER_PAGE)));
       return;
     }
 
