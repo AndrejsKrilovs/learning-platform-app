@@ -24,13 +24,22 @@ const selectPageNumber = (event) => {
 const appendCourseForCurrentUser = (event) => {
   const courseId = event.target.id.split('course')[1]
   fetch(`http://localhost:8080/courseItems/take/${courseId}`)
-    .then(response => {
-      removeChildren('#courseItemTableHeaders')
-      removeChildren('#courseItemList')
-      removeChildren('#pagination')
-      generateCourseItems()
+    .then(response => response.json())
+    .then(data => {
+      if (data.violations) {
+        document.querySelector('#courseError').innerHTML = `
+          <div class="alert alert-primary" role="alert">
+            Sorry, ${data.violations[0].message}
+          </div>
+        `
+      }
+      else {
+        removeChildren('#courseItemTableHeaders')
+        removeChildren('#courseItemList')
+        removeChildren('#pagination')
+        generateCourseItems()
+      }
     })
-    .catch(error => console.log(error.message))
 }
 
 const renderPaginationItems = (responseData) => {
@@ -101,6 +110,7 @@ export const generateCourseItems = () => {
   fetch(`http://localhost:8080/courseItems?page=${courseItemPage}`)
     .then(response => response.json())
     .then(data => {
+      document.querySelector('#courseError').innerHTML = ``
       renderCourseHeaders(data.headers)
       renderCourseItems(data.items)
       renderPaginationItems(data.metadata)
@@ -109,6 +119,9 @@ export const generateCourseItems = () => {
 
 export const renderCourseTable = () => {
   return `
+    <span id="courseError">
+    </span>
+
     <table class="table">
       <thead>
         <tr id="courseItemTableHeaders" />
@@ -118,5 +131,23 @@ export const renderCourseTable = () => {
     <nav aria-label="Page navigation example">
       <ul class="pagination" id="pagination" />
     </nav>
+
+    <div class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Modal body text goes here.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
   `
 }
