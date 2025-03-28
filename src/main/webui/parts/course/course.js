@@ -24,14 +24,15 @@ const selectPageNumber = (event) => {
 const appendCourseForCurrentUser = (event) => {
   const courseId = event.target.id.split('course')[1]
   fetch(`http://localhost:8080/courseItems/take/${courseId}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.violations) {
-        document.querySelector('#courseError').innerHTML = `
-          <div class="alert alert-primary" role="alert">
-            Sorry, ${data.violations[0].message}
-          </div>
-        `
+    .then(response => {
+      if (response.status === 400) {
+        response.json().then(data => {
+          document.querySelector('#courseError').innerHTML = `
+            <div class="alert alert-primary" role="alert">
+              Sorry, ${data.violations[0].message}
+            </div>
+          `
+        })
       }
       else {
         removeChildren('#courseItemTableHeaders')
@@ -121,7 +122,6 @@ export const renderCourseTable = () => {
   return `
     <span id="courseError">
     </span>
-
     <table class="table">
       <thead>
         <tr id="courseItemTableHeaders" />

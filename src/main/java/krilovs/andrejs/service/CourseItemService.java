@@ -21,35 +21,19 @@ public class CourseItemService {
   private final List<CourseItemDomain> userCourseItems;
   private final AtomicLong courseId;
 
+  public CourseItemService() {
+    courseId = new AtomicLong();
+    courseItems = new CopyOnWriteArrayList<>();
+    userCourseItems = new CopyOnWriteArrayList<>();
+    initFakeCourses();
+  }
+
   public List<CourseItemDomain> getCourseItems(Integer firstElementIndex, Integer lastElementIndex) {
     if (lastElementIndex >= courseItems.size()) {
       lastElementIndex = courseItems.size();
     }
 
     return courseItems.subList(firstElementIndex, lastElementIndex);
-  }
-
-  public CourseItemService() {
-    courseId = new AtomicLong();
-    courseItems = new CopyOnWriteArrayList<>();
-    userCourseItems = new CopyOnWriteArrayList<>();
-
-//    Remove this cycle and random property value after go live
-    Random random = new Random();
-
-    for (int i = 0; i < TOTAL_FAKE_COURSE_ITEMS; i++) {
-      long beginDate = LocalDate.now().toEpochDay();
-      long endDate = LocalDate.now().plusYears(1L).toEpochDay();
-
-      CourseItemDomain item = new CourseItemDomain(
-        courseId.getAndIncrement(),
-        "Course name %d".formatted(i),
-        LocalDate.ofEpochDay(random.nextLong(beginDate, endDate)),
-        BigDecimal.valueOf(random.nextDouble(0, 100))
-      );
-
-      courseItems.add(item);
-    }
   }
 
   public CourseItemDomain addCourseItem(CourseItemDomain itemToAdd) {
@@ -77,5 +61,26 @@ public class CourseItemService {
 
   public List<CourseItemDomain> getUserCourseItems() {
     return userCourseItems;
+  }
+
+  /**
+   * Remove this method after go live
+   */
+  private void initFakeCourses() {
+    Random random = new Random();
+
+    for (int i = 0; i < TOTAL_FAKE_COURSE_ITEMS; i++) {
+      long beginDate = LocalDate.now().toEpochDay();
+      long endDate = LocalDate.now().plusYears(1L).toEpochDay();
+
+      CourseItemDomain item = new CourseItemDomain(
+        courseId.getAndIncrement(),
+        "Course name %d".formatted(i),
+        LocalDate.ofEpochDay(random.nextLong(beginDate, endDate)),
+        BigDecimal.valueOf(random.nextDouble(0, 100))
+      );
+
+      courseItems.add(item);
+    }
   }
 }
