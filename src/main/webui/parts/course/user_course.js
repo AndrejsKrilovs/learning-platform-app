@@ -1,7 +1,20 @@
 import './course.css'
+import { renderModal, generateContent } from './../modal/modal.js'
+import 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'
+
+const getLessonsForCurrentCourse = (event) => {
+  fetch(`http://localhost:8080/lessons/take/${event.target.id.split('course')[1]}`)
+    .then(response => response.json())
+    .then(data => {
+      const selectedCourseHeader = data.metadata.courseName
+      const selectedCourseLessonList = data.lessons
+      document.querySelector('#modalArea').innerHTML = renderModal(selectedCourseHeader, selectedCourseLessonList)
+      generateContent(selectedCourseLessonList)
+    })
+}
 
 const renderCourseItems = (responseData) => {
-  if(responseData.metadata.totalElements === 0) {
+  if (responseData.metadata.totalElements === 0) {
     document.querySelector('#content-data').innerHTML = `
       <div class="alert alert-primary" role="alert">
         No items at this moment. Try later.
@@ -28,7 +41,10 @@ const renderCourseItems = (responseData) => {
     const showLessonsButton = document.createElement('button')
     showLessonsButton.setAttribute('class', 'btn btn-primary')
     showLessonsButton.setAttribute('id', `course${responseItem.id}`)
+    showLessonsButton.setAttribute('data-bs-toggle', 'modal')
+    showLessonsButton.setAttribute('data-bs-target', '#exampleModal')
     showLessonsButton.innerText = `Show lessons`
+    showLessonsButton.addEventListener('mouseenter', getLessonsForCurrentCourse, true)
     tableRow.appendChild(showLessonsButton)
 
     document.querySelector('#courseItemList').appendChild(tableRow)
@@ -61,5 +77,7 @@ export const renderUserCourseTable = () => {
       </thead>
       <tbody id="courseItemList" />
     </table>
+    <div id="modalArea">
+    </div>
   `
 }
