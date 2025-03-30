@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -36,6 +37,7 @@ public class LessonItemRepository {
   public List<LessonItemDomain> getLessonsForCourse(Long courseId) {
     lessonsForSelectedCourse = userLessonItems.stream()
       .filter(lesson -> courseId.equals(lesson.getCourse().getId()))
+      .sorted(Comparator.comparing(LessonItemDomain::getStartsAt))
       .toList();
 
     return lessonsForSelectedCourse;

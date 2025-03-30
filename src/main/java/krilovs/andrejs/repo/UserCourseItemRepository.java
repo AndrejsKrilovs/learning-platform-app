@@ -3,6 +3,7 @@ package krilovs.andrejs.repo;
 import jakarta.enterprise.context.ApplicationScoped;
 import krilovs.andrejs.domain.CourseItemDomain;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,6 +21,7 @@ public class UserCourseItemRepository {
   }
 
   public List<CourseItemDomain> getUserCourseItems() {
+    userCourseItems.sort(Comparator.comparing(CourseItemDomain::getStartDate));
     return userCourseItems;
   }
 
