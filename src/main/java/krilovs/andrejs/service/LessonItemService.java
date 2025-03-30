@@ -16,14 +16,14 @@ public class LessonItemService {
   UserCourseItemRepository userCourseItemRepository;
 
   @Inject
-  LessonItemRepository lessonRepository;
+  LessonItemRepository lessonItemRepository;
 
   public List<LessonItemDomain> showLessonsForSelectedCourse(Long courseId, Integer startElementNumber, Integer lastElementNumber) {
-    return lessonRepository.getLessonsForCourse(courseId).subList(startElementNumber, lastElementNumber);
+    return lessonItemRepository.getLessonsForCourse(courseId).subList(startElementNumber, lastElementNumber);
   }
 
-  public int totalLessonsCount() {
-    return lessonRepository.totalElementCount();
+  public int totalLessonsForSelectedCourse() {
+    return lessonItemRepository.totalElementsCount();
   }
 
   public Optional<CourseItemDomain> findUserCourse(Long courseId) {

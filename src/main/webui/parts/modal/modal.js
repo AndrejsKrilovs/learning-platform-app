@@ -1,8 +1,10 @@
 export const generateContent = (responseContent) => {
   for (let lesson of responseContent) {
-    console.log(lesson)
     const lessonItem = document.createElement('p')
-    lessonItem.innerHTML = `<b>${lesson.name}</b>`
+    lessonItem.innerHTML = `
+      <span>${lesson.startsAt}&nbsp;</span>
+      <b>${lesson.name}</b>
+    `
     document.querySelector('#modalBody').appendChild(lessonItem)
   }
 }

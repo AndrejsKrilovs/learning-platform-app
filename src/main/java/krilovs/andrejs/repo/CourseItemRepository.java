@@ -33,14 +33,11 @@ public class CourseItemRepository {
       long beginDate = LocalDate.now().toEpochDay();
       long endDate = LocalDate.now().plusYears(1L).toEpochDay();
 
-      CourseItemDomain item = new CourseItemDomain(
-        courseId.getAndIncrement(),
-        "Course name %d".formatted(courseIdentifier),
-        LocalDate.ofEpochDay(random.nextLong(beginDate, endDate)),
-        BigDecimal.valueOf(random.nextDouble(0, 100))
-      );
-
-      courseItems.add(item);
+      CourseItemDomain item = new CourseItemDomain();
+      item.setLabel("Course name %d".formatted(courseIdentifier));
+      item.setStartDate(LocalDate.ofEpochDay(random.nextLong(beginDate, endDate)));
+      item.setPrice(BigDecimal.valueOf(random.nextDouble(0, 100)));
+      addCourse(item);
     }
   }
 

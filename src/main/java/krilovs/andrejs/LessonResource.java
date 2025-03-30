@@ -27,7 +27,7 @@ public class LessonResource {
   @GET
   @Path("/take/{courseId}")
   public Map<String, ?> showLessonsForSelectedCourse(
-    @PathParam("courseId")Long courseId,
+    @PathParam("courseId") Long courseId,
     @QueryParam("page") @DefaultValue("0") Integer pageNumber
   ) {
     CourseItemDomain selectedCourse = lessonService.findUserCourse(courseId)
@@ -38,18 +38,16 @@ public class LessonResource {
       ));
 
     int startIndex = pageNumber * ITEM_COUNT_PER_PAGE;
-    double totalPageCalculation = (double) lessonService.totalLessonsCount() / ITEM_COUNT_PER_PAGE;
+    double totalPageCalculation = (double) lessonService.totalLessonsForSelectedCourse() / ITEM_COUNT_PER_PAGE;
     List<LessonItemDomain> lessons = lessonService.showLessonsForSelectedCourse(
-      courseId,
-      startIndex,
-      startIndex + ITEM_COUNT_PER_PAGE
+      courseId, startIndex, startIndex + ITEM_COUNT_PER_PAGE
     );
 
     Map<String, ?> metadata = Map.of(
       "courseName", selectedCourse.getLabel(),
       "currentPage", pageNumber,
       "totalPages", Double.valueOf(Math.ceil(totalPageCalculation)).intValue(),
-      "totalElements", lessonService.totalLessonsCount()
+      "totalElements", lessonService.totalLessonsForSelectedCourse()
     );
 
     return Map.of(

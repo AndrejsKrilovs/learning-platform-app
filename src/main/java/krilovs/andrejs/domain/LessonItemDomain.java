@@ -1,18 +1,18 @@
 package krilovs.andrejs.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.time.LocalDateTime;
 
 public class LessonItemDomain {
   private Long id;
   private String name;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+  private LocalDateTime startsAt;
+  private String lecturer;
   @JsonIgnore
-  private Long courseId;
-
-  public LessonItemDomain(Long id, String name, Long courseId) {
-    this.id = id;
-    this.name = name;
-    this.courseId = courseId;
-  }
+  private CourseItemDomain course;
 
   public Long getId() {
     return id;
@@ -30,11 +30,27 @@ public class LessonItemDomain {
     this.name = name;
   }
 
-  public Long getCourseId() {
-    return courseId;
+  public LocalDateTime getStartsAt() {
+    return startsAt;
   }
 
-  public void setCourseId(Long courseId) {
-    this.courseId = courseId;
+  public void setStartsAt(LocalDateTime startsAt) {
+    this.startsAt = startsAt;
+  }
+
+  public String getLecturer() {
+    return lecturer;
+  }
+
+  public void setLecturer(String lecturer) {
+    this.lecturer = lecturer;
+  }
+
+  public CourseItemDomain getCourse() {
+    return course;
+  }
+
+  public void setCourse(CourseItemDomain course) {
+    this.course = course;
   }
 }

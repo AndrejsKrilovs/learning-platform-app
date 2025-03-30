@@ -26,7 +26,7 @@ public class CourseItemService {
   }
 
   public CourseItemDomain addCourseItem(CourseItemDomain itemToAdd) {
-    return repository.addCourse(itemToAdd) ? itemToAdd : new CourseItemDomain(null, null, null, null);
+    return repository.addCourse(itemToAdd) ? itemToAdd : new CourseItemDomain();
   }
 
   public int totalElementCount() {

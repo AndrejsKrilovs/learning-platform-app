@@ -19,12 +19,8 @@ public class CourseItemDomain {
   private BigDecimal price;
   private final Currency currency;
 
-  public CourseItemDomain(Long id, String label, LocalDate startDate, BigDecimal price) {
-    this.id = id;
-    this.label = label;
-    this.startDate = startDate;
-    this.price = price;
-    this.currency = Currency.getInstance("EUR");
+  public CourseItemDomain() {
+    this.currency = Currency.getInstance("EUR");;
   }
 
   public Long getId() {
