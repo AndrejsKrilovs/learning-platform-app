@@ -72,7 +72,7 @@ export const generateUserCourseItems = () => {
 
 export const renderUserCourseTable = () => {
   return `
-    <table class="table">
+    <table class="table" id="courseTable">
       <thead>
         <tr id="courseItemTableHeaders" />
       </thead>

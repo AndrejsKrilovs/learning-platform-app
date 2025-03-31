@@ -122,7 +122,7 @@ export const renderCourseTable = () => {
   return `
     <span id="courseError">
     </span>
-    <table class="table">
+    <table class="table" id="courseTable">
       <thead>
         <tr id="courseItemTableHeaders" />
       </thead>

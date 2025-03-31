@@ -25,10 +25,17 @@ export const generateContent = (responseContent) => {
   for (let lesson of responseContent.lessons) {
     const lessonItem = document.createElement('p')
     lessonItem.innerHTML = `
-      <span>${lesson.startsAt}&nbsp;</span>
-      <b>${lesson.name}</b>,&nbsp;
-      <span>Lecturer:&nbsp;</span>
-      <b>${lesson.lecturer}</b>
+      <div class="col-auto">
+        <span>${lesson.startsAt}&nbsp;</span>
+        <b>${lesson.name}</b>,&nbsp;
+      </div>
+      <div class="col-auto">
+        <span>Lecturer:&nbsp;</span>
+        <b>${lesson.lecturer}</b>,&nbsp;
+      </div>
+      <div class="col-auto">
+        <button type="button" class="btn btn-link" disabled>Lesson notes</button>
+      </div>
     `
     document.querySelector('#modalBody').appendChild(lessonItem)
   }
@@ -55,7 +62,7 @@ export const renderModal = (header, content, courseId) => {
   selectedCourseIdentifier = courseId
   return `
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-xl">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">${header}</h1>
