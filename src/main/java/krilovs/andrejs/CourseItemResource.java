@@ -60,7 +60,8 @@ public class CourseItemResource {
         .orElseThrow(() -> new CourseException(
           "Taking course exception",
           "takeCourse",
-          "User cannot take more than %d courses".formatted(ITEM_COUNT_PER_PAGE)));
+          "Selected course does not exists"
+        ));
       return;
     }
 
