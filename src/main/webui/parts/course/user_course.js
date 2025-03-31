@@ -3,12 +3,13 @@ import { renderModal, generateContent } from './../modal/modal.js'
 import 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js'
 
 const getLessonsForCurrentCourse = (event) => {
+  const selectedCourseId = event.target.id.split('course')[1]
   fetch(`http://localhost:8080/lessons/take/${event.target.id.split('course')[1]}`)
     .then(response => response.json())
     .then(data => {
       const selectedCourseHeader = data.metadata.courseName
-      const selectedCourseLessonList = data.lessons
-      document.querySelector('#modalArea').innerHTML = renderModal(selectedCourseHeader, selectedCourseLessonList)
+      const selectedCourseLessonList = data
+      document.querySelector('#modalArea').innerHTML = renderModal(selectedCourseHeader, selectedCourseLessonList, selectedCourseId)
       generateContent(selectedCourseLessonList)
     })
 }
