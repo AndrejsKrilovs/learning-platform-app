@@ -23,18 +23,17 @@ const selectLessonPageNumber = (event) => {
 
 export const generateContent = (responseContent) => {
   for (let lesson of responseContent.lessons) {
-    const lessonItem = document.createElement('p')
+    const lessonItem = document.createElement('div')
+    lessonItem.setAttribute('class', 'row')
     lessonItem.innerHTML = `
       <div class="col-auto">
         <span>${lesson.startsAt}&nbsp;</span>
-        <b>${lesson.name}</b>,&nbsp;
+        <b>${lesson.name}</b>&nbsp;
       </div>
-      <div class="col-auto">
+      <div class="col-auto" style="margin-top:-3px">
         <span>Lecturer:&nbsp;</span>
-        <b>${lesson.lecturer}</b>,&nbsp;
-      </div>
-      <div class="col-auto">
-        <button type="button" class="btn btn-link" disabled>Lesson notes</button>
+        <b>${lesson.lecturer}</b>&nbsp;
+        <button type="button" class="btn btn-link" style="margin-top:-5px">Lesson notes</button>
       </div>
     `
     document.querySelector('#modalBody').appendChild(lessonItem)
