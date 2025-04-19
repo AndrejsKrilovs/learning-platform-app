@@ -17,11 +17,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-hibernate-orm-panache'
     implementation 'io.quarkus:quarkus-jdbc-postgresql'
     implementation 'io.quarkus:quarkus-security-jpa'
-    compileOnly 'org.projectlombok:lombok:1.18.38'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.quarkus:quarkus-junit5-mockito'
     testImplementation 'io.rest-assured:rest-assured'
-    testCompileOnly 'org.projectlombok:lombok:1.18.38'
 }
 
 group 'krilovs.andrejs'

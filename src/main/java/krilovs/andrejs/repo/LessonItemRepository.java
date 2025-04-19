@@ -54,12 +54,14 @@ public class LessonItemRepository {
 
   private void initFakeLessons() {
     Random random = new Random();
-    Integer totalCourseCount = courseItemRepository.totalElementsCount();
+    int totalCourseCount = (int) courseItemRepository.count();
 
     for (long courseIdentifier = 0; courseIdentifier < totalCourseCount; courseIdentifier++) {
       for (long lessonIdentifier = 0; lessonIdentifier < TOTAL_FAKE_LESSONS_PER_COURSE; lessonIdentifier++) {
         LessonItemDomain item = new LessonItemDomain();
-        CourseItemDomain course = courseItemRepository.findById(courseIdentifier).orElse(new CourseItemDomain());
+        CourseItemDomain course = courseItemRepository
+          .findByIdOptional(courseIdentifier)
+          .orElse(new CourseItemDomain());
         long beginDate = Objects.requireNonNullElse(course.getStartDate(), LocalDate.now())
           .toEpochSecond(LocalTime.of(0,0), ZoneOffset.ofHours(2));
         long endDate = LocalDateTime.now().plusYears(1L).toEpochSecond(ZoneOffset.ofHours(2));

@@ -1,68 +1,33 @@
 package krilovs.andrejs.repo;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import krilovs.andrejs.domain.CourseItemDomain;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Refactor this class after database implementation
- */
 @ApplicationScoped
-public class CourseItemRepository {
-  private static final int TOTAL_FAKE_COURSE_ITEMS = 18;
-  private final List<CourseItemDomain> courseItems;
-  private final AtomicLong courseId;
+public class CourseItemRepository implements PanacheRepository<CourseItemDomain> {
+  private final static int COURSE_ITEM_COUNT_PER_PAGE = 10;
+  private int totalPageNumber;
+  private int currentPage;
 
-  public CourseItemRepository() {
-    courseId = new AtomicLong();
-    courseItems = new CopyOnWriteArrayList<>();
-    initFakeCourses();
+  public List<CourseItemDomain> getAvailableCourses(int pageNumber) {
+    currentPage = pageNumber;
+    PanacheQuery<CourseItemDomain> queryForResult =
+      findAll(Sort.ascending("startDate")).page(pageNumber, COURSE_ITEM_COUNT_PER_PAGE);
+
+    totalPageNumber = queryForResult.pageCount();
+    return queryForResult.list();
   }
 
-  private void initFakeCourses() {
-    Random random = new Random();
-
-    for (int courseIdentifier = 0; courseIdentifier < TOTAL_FAKE_COURSE_ITEMS; courseIdentifier++) {
-      long beginDate = LocalDate.now().toEpochDay();
-      long endDate = LocalDate.now().plusYears(1L).toEpochDay();
-
-      CourseItemDomain item = new CourseItemDomain();
-      item.setLabel("Course name %d".formatted(courseIdentifier));
-      item.setStartDate(LocalDate.ofEpochDay(random.nextLong(beginDate, endDate)));
-      item.setPrice(BigDecimal.valueOf(random.nextDouble(0, 100)));
-      addCourse(item);
-    }
+  public int getTotalPageNumber() {
+    return totalPageNumber;
   }
 
-  public List<CourseItemDomain> getCourseItems() {
-    courseItems.sort(Comparator.comparing(CourseItemDomain::getStartDate));
-    return courseItems;
-  }
-
-  public boolean addCourse(CourseItemDomain item) {
-    item.setId(courseId.getAndIncrement());
-    return courseItems.add(item);
-  }
-
-  public void removeCourse(CourseItemDomain item) {
-    courseItems.remove(item);
-  }
-
-  public Optional<CourseItemDomain> findById(Long id) {
-    return courseItems.parallelStream()
-      .filter(course -> id.equals(course.getId()))
-      .findAny();
-  }
-
-  public Integer totalElementsCount() {
-    return courseItems.size();
+  public int getCurrentPage() {
+    return currentPage;
   }
 }
