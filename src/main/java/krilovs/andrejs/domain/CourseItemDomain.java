@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -48,6 +49,9 @@ public class CourseItemDomain {
   @Column(name = "course_currency", nullable = false)
   private final Currency currency = Currency.getInstance("EUR");
 
+  @Version
+  private int version;
+
   public Long getId() {
     return id;
   }
@@ -82,5 +86,13 @@ public class CourseItemDomain {
 
   public Currency getCurrency() {
     return currency;
+  }
+
+  public int getVersion() {
+    return version;
+  }
+
+  public void setVersion(int version) {
+    this.version = version;
   }
 }

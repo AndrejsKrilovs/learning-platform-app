@@ -1,9 +1,11 @@
 package krilovs.andrejs.repo;
 
+import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import krilovs.andrejs.domain.CourseItemDomain;
+import krilovs.andrejs.domain.UserDomain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,6 +17,9 @@ public class LoadDataRepository {
 
   @Inject
   CourseItemRepository courseItemRepository;
+
+  @Inject
+  UserRepository userRepository;
 
   @Transactional
   public void initFakeCourses() {
@@ -31,5 +36,32 @@ public class LoadDataRepository {
       item.setPrice(BigDecimal.valueOf(random.nextDouble(0, 100)));
       courseItemRepository.persist(item);
     }
+  }
+
+  @Transactional
+  public void initFakeUsers() {
+    UserDomain adminUser = new UserDomain();
+    adminUser.setLogin("admin");
+    adminUser.setPassword(BcryptUtil.bcryptHash("admin"));
+    adminUser.setName("Name");
+    adminUser.setSurname("Surname");
+    adminUser.setRole("admin");
+    userRepository.persist(adminUser);
+
+    UserDomain simpleUser = new UserDomain();
+    simpleUser.setLogin("username");
+    simpleUser.setPassword(BcryptUtil.bcryptHash("password"));
+    simpleUser.setName("Name");
+    simpleUser.setSurname("Surname");
+    simpleUser.setRole("student");
+    userRepository.persist(simpleUser);
+
+    UserDomain lecturer = new UserDomain();
+    lecturer.setLogin("lecturer");
+    lecturer.setPassword(BcryptUtil.bcryptHash("main"));
+    lecturer.setName("Name");
+    lecturer.setSurname("Surname");
+    lecturer.setRole("lecturer");
+    userRepository.persist(lecturer);
   }
 }

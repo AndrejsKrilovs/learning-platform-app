@@ -2,15 +2,17 @@ package krilovs.andrejs;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import krilovs.andrejs.domain.UserDomain;
-import krilovs.andrejs.exception.LoggingException;
+import krilovs.andrejs.exception.UserException;
+import krilovs.andrejs.request.LoginRequest;
 import krilovs.andrejs.service.UserService;
 
-import java.util.Map;
+import java.util.List;
 
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -20,11 +22,20 @@ public class UserResource {
 
   @POST
   @Path("/login")
-  public Map<String, String> login(@Valid UserDomain credentials) {
-    if (userService.authenticateUser(credentials)) {
-      return Map.of("login", credentials.login());
-    }
+  public UserDomain login(LoginRequest credentials) {
+    return userService.authenticateUser(credentials)
+      .orElseThrow(() -> new UserException("UserResource.login", "Incorrect credentials, try again"));
+  }
 
-    throw new LoggingException("login", "Incorrect credentials, try again");
+  @POST
+  @Path("/register")
+  public UserDomain register(@Valid UserDomain credentials) {
+      return userService.registerUser(credentials);
+  }
+
+  @GET
+  @Path("/all")
+  public List<UserDomain> allUsers() {
+    return userService.findAllUsers();
   }
 }
