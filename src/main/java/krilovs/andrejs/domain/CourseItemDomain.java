@@ -1,11 +1,15 @@
 package krilovs.andrejs.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -18,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Currency;
+import java.util.List;
 
 @Entity
 @Table(name = "course_table")
@@ -50,7 +55,17 @@ public class CourseItemDomain {
   private final Currency currency = Currency.getInstance("EUR");
 
   @Version
+  @JsonIgnore
   private int version;
+
+  @JsonIgnore
+  @ElementCollection
+  @CollectionTable(
+    name = "course_students_table",
+    joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+  )
+  @Column(name = "student_id")
+  private List<UserDomain> students;
 
   public Long getId() {
     return id;
@@ -94,5 +109,13 @@ public class CourseItemDomain {
 
   public void setVersion(int version) {
     this.version = version;
+  }
+
+  public List<UserDomain> getStudents() {
+    return students;
+  }
+
+  public void setStudents(List<UserDomain> students) {
+    this.students = students;
   }
 }
