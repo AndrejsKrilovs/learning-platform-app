@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -13,7 +14,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import krilovs.andrejs.domain.CourseItemDomain;
-import krilovs.andrejs.exception.CourseException;
 import krilovs.andrejs.service.CourseItemService;
 
 import java.util.Map;
@@ -30,19 +30,14 @@ public class CourseItemResource {
     return Map.of(
       "items", service.getItems(pageNumber),
       "headers", service.getMainFieldNames(),
-      "metadata", service.getRequestMetadata()
+      "metadata", service.getAvailableCoursesRequestMetadata()
     );
   }
 
   @GET
   @Path("/{id}")
-  public CourseItemDomain findCourseById(@PathParam("id") long itemId) {
-    return service.findItemById(itemId)
-      .orElseThrow(() -> new CourseException(
-        "Course not found",
-        "courseItemResource.findCourseById",
-        "Course with current identifier %d not found".formatted(itemId)
-      ));
+  public CourseItemDomain findCourseById(@PathParam("id") Long itemId) {
+    return service.findItemById(itemId);
   }
 
   @POST
@@ -59,39 +54,23 @@ public class CourseItemResource {
 
   @DELETE
   @Path("/remove/{id}")
-  public void removeCourseItem(@PathParam("id") long itemId) {
+  public void removeCourseItem(@PathParam("id") Long itemId) {
     service.removeItem(itemId);
   }
 
-//  @GET
-//  @Path("/take/{id}")
-//  public void takeCourse(@PathParam("id") Long courseId) {
-//    if (service.getUserCourseItems().size() < ITEM_COUNT_PER_PAGE) {
-//      service.takeCourse(courseId)
-//        .orElseThrow(() -> new CourseException(
-//          "Taking course exception",
-//          "takeCourse",
-//          "Selected course does not exists"
-//        ));
-//      return;
-//    }
-//
-//    throw new CourseException(
-//      "Taking course exception",
-//      "takeCourse",
-//      "User cannot take more than %d courses".formatted(ITEM_COUNT_PER_PAGE)
-//    );
-//  }
+  @GET
+  @Path("/take/{courseId}")
+  public CourseItemDomain takeCourse(@PathParam("courseId") Long courseId, @HeaderParam("username") String username) {
+    return service.takeCourseToUser(username, courseId);
+  }
 
-//  @GET
-//  @Path("/userCourses")
-//  public Map<String, ?> getUserCourseItems() {
-//    List<CourseItemDomain> userCourseList = service.getUserCourseItems();
-//
-//    return Map.of(
-//      "items", userCourseList,
-//      "headers", Stream.of(CourseItemDomain.class.getDeclaredFields()).map(Field::getName).toList(),
-//      "metadata", Map.of("totalElements", userCourseList.size())
-//    );
-//  }
+  @GET
+  @Path("/userCourses")
+  public Map<String, ?> getUserCourseItems(@HeaderParam("username") String username) {
+    return Map.of(
+      "items", service.getUserCourseItems(username),
+      "headers", service.getMainFieldNames(),
+      "metadata", service.getUserCoursesRequestMetadata()
+    );
+  }
 }

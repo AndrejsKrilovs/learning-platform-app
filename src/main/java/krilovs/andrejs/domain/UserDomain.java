@@ -2,14 +2,19 @@ package krilovs.andrejs.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -49,6 +54,16 @@ public class UserDomain {
 
   @Column(name = "last_visit_at")
   private LocalDateTime lastVisitedDate;
+
+  @JsonIgnore
+  @ElementCollection
+  @JoinTable(
+    name = "user_course_table",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "course_id"}),
+    joinColumns = @JoinColumn(name = "student_id", referencedColumnName = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+  )
+  private List<CourseItemDomain> userCourses;
 
   public String getLogin() {
     return login;
@@ -108,6 +123,14 @@ public class UserDomain {
 
   public void setVersion(int version) {
     this.version = version;
+  }
+
+  public List<CourseItemDomain> getUserCourses() {
+    return userCourses;
+  }
+
+  public void setUserCourses(List<CourseItemDomain> userCourses) {
+    this.userCourses = userCourses;
   }
 
   @Override
