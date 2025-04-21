@@ -10,24 +10,83 @@ import java.util.List;
 
 @ApplicationScoped
 public class CourseItemRepository implements PanacheRepository<CourseItemDomain> {
-  private final static int COURSE_ITEM_COUNT_PER_PAGE = 10;
-  private int totalPageNumber;
-  private int currentPage;
+  private static final int COURSE_ITEM_COUNT_PER_PAGE = 10;
+  private static final String USER_COURSE_QUERY = """
+      select
+        c
+      from
+        UserDomain u
+      join
+        u.userCourses c
+      where
+        u.login = ?1
+      order by
+        c.startDate asc
+    """;
+  private static final String USER_AVAILABLE_COURSES_SQL = """
+      from
+        CourseItemDomain c
+      where
+        c not in (
+          select
+            u.userCourses
+          from
+            UserDomain u
+          where
+            u.login = ?1
+        )
+    """;
 
-  public List<CourseItemDomain> getAvailableCourses(int pageNumber) {
-    currentPage = pageNumber;
+  private int totalPageNumberForAvailableCourses;
+  private int currentPageForAvailableCourses;
+  private long totalElementsCountForAvailableCourses;
+  private int totalPageNumberForUserCourses;
+  private int currentPageForUserCourses;
+  private long totalElementsCountForUserCourses;
+
+  public List<CourseItemDomain> getAvailableCourses(String username, int pageNumber) {
+    Sort sortDirection = Sort.ascending("startDate");
+    currentPageForAvailableCourses = pageNumber;
+
     PanacheQuery<CourseItemDomain> queryForResult =
-      findAll(Sort.ascending("startDate")).page(pageNumber, COURSE_ITEM_COUNT_PER_PAGE);
+      find(USER_AVAILABLE_COURSES_SQL, sortDirection, username).page(pageNumber, COURSE_ITEM_COUNT_PER_PAGE);
 
-    totalPageNumber = queryForResult.pageCount();
+    totalPageNumberForAvailableCourses = queryForResult.pageCount();
+    totalElementsCountForAvailableCourses = queryForResult.count();
     return queryForResult.list();
   }
 
-  public int getTotalPageNumber() {
-    return totalPageNumber;
+  public List<CourseItemDomain> getUserCourses(String username, int pageNumber) {
+    currentPageForUserCourses = pageNumber;
+    PanacheQuery<CourseItemDomain> queryResult =
+      find(USER_COURSE_QUERY, username).page(pageNumber, COURSE_ITEM_COUNT_PER_PAGE);
+
+    totalPageNumberForUserCourses = queryResult.pageCount();
+    totalElementsCountForUserCourses = queryResult.count();
+    return queryResult.list();
   }
 
-  public int getCurrentPage() {
-    return currentPage;
+  public int getTotalPageNumberForAvailableCourses() {
+    return totalPageNumberForAvailableCourses;
+  }
+
+  public int getCurrentPageForAvailableCourses() {
+    return currentPageForAvailableCourses;
+  }
+
+  public long getTotalElementsCountForAvailableCourses() {
+    return totalElementsCountForAvailableCourses;
+  }
+
+  public int getTotalPageNumberForUserCourses() {
+    return totalPageNumberForUserCourses;
+  }
+
+  public int getCurrentPageForUserCourses() {
+    return currentPageForUserCourses;
+  }
+
+  public long getTotalElementsCountForUserCourses() {
+    return totalElementsCountForUserCourses;
   }
 }

@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class CourseItemService {
   private final static int MAXIMAL_COURSE_COUNT_PER_PERSON = 10;
-  private int totalUserCourseCount;
 
   @Inject
   CourseItemRepository repository;
@@ -32,7 +31,30 @@ public class CourseItemService {
   @Inject
   UserRepository userRepository;
 
-  public List<CourseItemDomain> getItems(int pageNumber) {
+  public List<String> getMainFieldNames() {
+    return Stream.of(CourseItemDomain.class.getDeclaredFields())
+      .map(Field::getName)
+      .filter(excludeFields())
+      .toList();
+  }
+
+  public Map<String, Number> getAvailableCoursesRequestMetadata() {
+    return Map.of(
+      "currentPage", repository.getCurrentPageForAvailableCourses(),
+      "totalPages", repository.getTotalPageNumberForAvailableCourses(),
+      "totalElements", repository.getTotalElementsCountForAvailableCourses()
+    );
+  }
+
+  public Map<String, Number> getUserCoursesRequestMetadata() {
+    return Map.of(
+      "currentPage", repository.getCurrentPageForUserCourses(),
+      "totalPages", repository.getTotalPageNumberForUserCourses(),
+      "totalElements", repository.getTotalElementsCountForUserCourses()
+    );
+  }
+
+  public List<CourseItemDomain> getItems(String username, int pageNumber) {
     if (pageNumber < 0) {
       throw new IncorrectNumberException(
         "Incorrect page number",
@@ -41,7 +63,7 @@ public class CourseItemService {
       );
     }
 
-    return repository.getAvailableCourses(pageNumber);
+    return repository.getAvailableCourses(username, pageNumber);
   }
 
   public CourseItemDomain findItemById(long id) {
@@ -51,6 +73,10 @@ public class CourseItemService {
         "CourseItemService.findItemById",
         "Course with current identifier %d not found".formatted(id)
       ));
+  }
+
+  public List<CourseItemDomain> getUserCourses(String username, Integer pageNumber) {
+    return repository.getUserCourses(username, pageNumber);
   }
 
   @Transactional
@@ -87,27 +113,12 @@ public class CourseItemService {
     repository.deleteById(itemId);
   }
 
-  public Map<String, Number> getAvailableCoursesRequestMetadata() {
-    return Map.of(
-      "currentPage", repository.getCurrentPage(),
-      "totalPages", repository.getTotalPageNumber(),
-      "totalElements", repository.count()
-    );
-  }
-
-  public List<String> getMainFieldNames() {
-    return Stream.of(CourseItemDomain.class.getDeclaredFields())
-      .map(Field::getName)
-      .filter(excludeFields())
-      .toList();
-  }
-
   @Transactional
-  public CourseItemDomain takeCourseToUser(String userName, Long courseId) {
-    UserDomain userFromDatabase = userRepository.findByIdOptional(userName, LockModeType.OPTIMISTIC)
+  public CourseItemDomain takeCourseToUser(String username, Long courseId) {
+    UserDomain userFromDatabase = userRepository.findByIdOptional(username, LockModeType.OPTIMISTIC)
       .orElseThrow(() -> new UserException(
         "CourseItemService.takeCourseToUser",
-        "User '%s' not exists or do not logged yet".formatted(userName)
+        "User '%s' not exists or do not logged yet".formatted(username)
       ));
 
     CourseItemDomain courseToTake = repository.findByIdOptional(courseId, LockModeType.OPTIMISTIC)
@@ -122,7 +133,7 @@ public class CourseItemService {
       throw new CourseException(
         "Take course exception",
         "CourseItemService.takeCourseToUser",
-        "Course with id %d already applied for user '%s'".formatted(courseId, userName)
+        "Course with id %d already applied for user '%s'".formatted(courseId, username)
       );
     }
     if (userCourses.size() > MAXIMAL_COURSE_COUNT_PER_PERSON) {
@@ -135,18 +146,6 @@ public class CourseItemService {
 
     userCourses.add(courseToTake);
     return courseToTake;
-  }
-
-  @Transactional
-  public List<CourseItemDomain> getUserCourseItems(String userName) {
-    UserDomain userFromDatabase = userRepository.findById(userName, LockModeType.OPTIMISTIC);
-    List<CourseItemDomain> userCourses = userFromDatabase.getUserCourses();
-    totalUserCourseCount = userCourses.size();
-    return userCourses;
-  }
-
-  public Map<String, Number> getUserCoursesRequestMetadata() {
-    return Map.of("totalElements", totalUserCourseCount);
   }
 
   private Predicate<String> excludeFields() {

@@ -26,9 +26,10 @@ public class CourseItemResource {
   private CourseItemService service;
 
   @GET
-  public Map<String, ?> getCourseItems(@QueryParam("page") @DefaultValue("0") Integer pageNumber) {
+  public Map<String, ?> getCourseItems(@HeaderParam("username") String username,
+                                       @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
     return Map.of(
-      "items", service.getItems(pageNumber),
+      "items", service.getItems(username, pageNumber),
       "headers", service.getMainFieldNames(),
       "metadata", service.getAvailableCoursesRequestMetadata()
     );
@@ -60,15 +61,17 @@ public class CourseItemResource {
 
   @GET
   @Path("/take/{courseId}")
-  public CourseItemDomain takeCourse(@PathParam("courseId") Long courseId, @HeaderParam("username") String username) {
+  public CourseItemDomain takeCourse(@PathParam("courseId") Long courseId,
+                                     @HeaderParam("username") String username) {
     return service.takeCourseToUser(username, courseId);
   }
 
   @GET
   @Path("/userCourses")
-  public Map<String, ?> getUserCourseItems(@HeaderParam("username") String username) {
+  public Map<String, ?> getUserCourseItems(@HeaderParam("username") String username,
+                                           @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
     return Map.of(
-      "items", service.getUserCourseItems(username),
+      "items", service.getUserCourses(username, pageNumber),
       "headers", service.getMainFieldNames(),
       "metadata", service.getUserCoursesRequestMetadata()
     );

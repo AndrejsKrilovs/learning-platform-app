@@ -3,6 +3,7 @@ package krilovs.andrejs.service;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.persistence.LockModeType;
 import jakarta.validation.ConstraintViolationException;
 import krilovs.andrejs.domain.CourseItemDomain;
 import krilovs.andrejs.domain.UserDomain;
@@ -35,10 +36,10 @@ class CourseItemServiceTest {
 
   @Test
   void getItems() {
-    Mockito.when(repository.getAvailableCourses(Mockito.anyInt()))
+    Mockito.when(repository.getAvailableCourses(Mockito.anyString(), Mockito.anyInt()))
       .thenReturn(List.of(generateValidCourseItem()));
 
-    List<CourseItemDomain> resultList = service.getItems(Integer.MAX_VALUE);
+    List<CourseItemDomain> resultList = service.getItems(Mockito.anyString(), Mockito.anyInt());
     Assertions.assertNotNull(resultList);
     Assertions.assertFalse(resultList.isEmpty());
   }
@@ -134,11 +135,11 @@ class CourseItemServiceTest {
 
   @Test
   void takeCourseForNotExistingUser() {
-    Mockito.when(userRepository.findByIdOptional(Mockito.anyString(), Mockito.any()))
+    Mockito.when(userRepository.findByIdOptional(generateValidUser().getLogin(), LockModeType.OPTIMISTIC))
       .thenReturn(Optional.of(generateValidUser()));
 
     UserException notExistingUser = Assertions.assertThrows(
-      UserException.class, () -> service.takeCourseToUser("fake_user", Mockito.anyLong())
+      UserException.class, () -> service.takeCourseToUser("fake_user", Long.MAX_VALUE)
     );
     Assertions.assertEquals("User 'fake_user' not exists or do not logged yet", notExistingUser.getMessage());
   }
@@ -147,13 +148,13 @@ class CourseItemServiceTest {
   void takeNotExistingCourse() {
     Mockito.when(userRepository.findByIdOptional(Mockito.anyString(), Mockito.any()))
       .thenReturn(Optional.of(generateValidUser()));
-    Mockito.when(repository.findByIdOptional(Mockito.anyLong(), Mockito.any()))
+    Mockito.when(repository.findByIdOptional(generateValidCourseItem().getId(), LockModeType.OPTIMISTIC))
       .thenReturn(Optional.of(generateValidCourseItem()));
 
     CourseException notExistingCourse = Assertions.assertThrows(
-      CourseException.class, () -> service.takeCourseToUser(Mockito.anyString(), 100L)
+      CourseException.class, () -> service.takeCourseToUser(generateValidUser().getLogin(), Long.MAX_VALUE)
     );
-    Assertions.assertEquals("Course with id 100 not exists", notExistingCourse.getMessage());
+    Assertions.assertEquals("Course with id %d not exists".formatted(Long.MAX_VALUE), notExistingCourse.getMessage());
   }
 
   private CourseItemDomain generateValidCourseItem() {
