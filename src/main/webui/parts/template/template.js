@@ -69,6 +69,7 @@ export const addMenuItems = () => {
 }
 
 export const renderMainTemplate = (user) => {
+  sessionStorage.setItem('username', user)
   return `
     <div id="mainTemplate">
       <div class="container px-4 py-5">

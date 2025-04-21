@@ -62,7 +62,13 @@ const renderCourseHeaders = (responseData) => {
 }
 
 export const generateUserCourseItems = () => {
-  fetch(`http://localhost:8080/courseItems/userCourses`)
+  fetch(`http://localhost:8080/courseItems/userCourses`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'username': sessionStorage.getItem('username')
+    }
+  })
     .then(response => response.json())
     .then(data => {
       renderCourseHeaders(data)

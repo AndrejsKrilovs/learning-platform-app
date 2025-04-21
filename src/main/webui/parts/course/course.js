@@ -23,7 +23,13 @@ const selectPageNumber = (event) => {
 
 const appendCourseForCurrentUser = (event) => {
   const courseId = event.target.id.split('course')[1]
-  fetch(`http://localhost:8080/courseItems/take/${courseId}`)
+  fetch(`http://localhost:8080/courseItems/take/${courseId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'username': sessionStorage.getItem('username')
+    }
+  })
     .then(response => {
       if (response.status === 400) {
         response.json().then(data => {
@@ -108,7 +114,13 @@ const renderCourseHeaders = (responseData) => {
 }
 
 export const generateCourseItems = () => {
-  fetch(`http://localhost:8080/courseItems?page=${courseItemPage}`)
+  fetch(`http://localhost:8080/courseItems?page=${courseItemPage}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'username': sessionStorage.getItem('username')
+    }
+  })
     .then(response => response.json())
     .then(data => {
       document.querySelector('#courseError').innerHTML = ``

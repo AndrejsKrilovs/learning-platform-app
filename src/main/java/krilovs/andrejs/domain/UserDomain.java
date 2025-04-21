@@ -26,7 +26,9 @@ public class UserDomain {
   @Size(max = 20, message = "Maximal length for username is 20 characters")
   private String login;
 
-  @JsonIgnore
+  /**
+   * Hide this property when crypto functionality will be implemented in frontend
+   */
   @Column(name = "user_pwd")
   @NotBlank(message = "Password should be defined")
   private String password;
