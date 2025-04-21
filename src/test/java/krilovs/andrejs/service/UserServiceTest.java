@@ -29,9 +29,9 @@ class UserServiceTest {
       .thenReturn(Optional.of(new UserDomain()));
 
     LoginRequest userLogin = new LoginRequest("login", BcryptUtil.bcryptHash("pwd"));
-    Optional<UserDomain> result = userService.authenticateUser(userLogin);
-    Assertions.assertTrue(result.isPresent());
-    Assertions.assertNotNull(result.get().getLastVisitedDate());
+    UserDomain result = userService.authenticateUser(userLogin);
+    Assertions.assertNotNull(result);
+    Assertions.assertNotNull(result.getLastVisitedDate());
   }
 
   @Test
@@ -40,8 +40,11 @@ class UserServiceTest {
       .thenReturn(Optional.empty());
 
     LoginRequest userLogin = new LoginRequest("login", BcryptUtil.bcryptHash("pwd"));
-    Optional<UserDomain> result = userService.authenticateUser(userLogin);
-    Assertions.assertFalse(result.isPresent());
+    UserException incorrectUser = Assertions.assertThrows(
+      UserException.class, () -> userService.authenticateUser(userLogin)
+    );
+
+    Assertions.assertEquals("Incorrect credentials, try again", incorrectUser.getMessage());
   }
 
   @Test

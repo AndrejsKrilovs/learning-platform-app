@@ -20,9 +20,11 @@ public class UserService {
   @Inject
   UserRepository userRepository;
 
-  public Optional<UserDomain> authenticateUser(@Valid LoginRequest credentials) {
-    Optional<UserDomain> result = userRepository.findByLoginAndPassword(credentials.login(), credentials.password());
-    result.ifPresent(user -> user.setLastVisitedDate(LocalDateTime.now()));
+  public UserDomain authenticateUser(@Valid LoginRequest credentials) {
+    UserDomain result = userRepository.findByLoginAndPassword(credentials.login(), credentials.password())
+      .orElseThrow(() -> new UserException("UserResource.login", "Incorrect credentials, try again"));
+
+    result.setLastVisitedDate(LocalDateTime.now());
     return result;
   }
 

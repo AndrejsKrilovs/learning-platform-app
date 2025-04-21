@@ -23,8 +23,7 @@ public class UserResource {
   @POST
   @Path("/login")
   public UserDomain login(LoginRequest credentials) {
-    return userService.authenticateUser(credentials)
-      .orElseThrow(() -> new UserException("UserResource.login", "Incorrect credentials, try again"));
+    return userService.authenticateUser(credentials);
   }
 
   @POST
