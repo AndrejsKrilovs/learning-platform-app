@@ -20,6 +20,7 @@ public class UserService {
   @Inject
   UserRepository userRepository;
 
+  @Transactional
   public UserDomain authenticateUser(@Valid LoginRequest credentials) {
     UserDomain result = userRepository.findByLoginAndPassword(credentials.login(), credentials.password())
       .orElseThrow(() -> new UserException("UserResource.login", "Incorrect credentials, try again"));
