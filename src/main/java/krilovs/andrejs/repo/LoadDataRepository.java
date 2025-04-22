@@ -88,7 +88,7 @@ public class LoadDataRepository {
         );
 
         LessonItemDomain lesson = new LessonItemDomain();
-        lesson.setName("Lesson %d for course %d".formatted(lessonIdentifier, course.getId()));
+        lesson.setName("Lesson %d for %s".formatted(lessonIdentifier, course.getLabel()));
         lesson.setCourse(course);
         lesson.setStartsAt(generatedDate);
         lesson.setLecturer(userRepository.findById("lecturer", LockModeType.OPTIMISTIC));

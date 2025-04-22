@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import krilovs.andrejs.domain.LessonItemDomain;
 import krilovs.andrejs.domain.UserDomain;
+import krilovs.andrejs.exception.CourseException;
 import krilovs.andrejs.repo.LessonItemRepository;
 import krilovs.andrejs.request.LessonResponse;
 
@@ -31,6 +32,14 @@ public class LessonItemService {
   }
 
   public List<LessonResponse> showLessonsForSelectedCourse(Long courseId, Integer pageNumber) {
+    if (courseId <= 0) {
+      throw new CourseException(
+        "Incorrect course exception",
+        "LessonItemService.showLessonsForSelectedCourse",
+        "Cannot take lessons for course item with negative identifier"
+      );
+    }
+
     return lessonItemRepository.getCourseLessons(courseId, pageNumber)
       .peek(lessonItem -> courseName = Objects.requireNonNullElse(lessonItem.getCourse().getLabel(), ""))
       .map(this::mapLessonResponse)

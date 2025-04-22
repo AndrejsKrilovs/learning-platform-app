@@ -2,6 +2,7 @@ package krilovs.andrejs.repo;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import krilovs.andrejs.domain.LessonItemDomain;
 
@@ -17,7 +18,7 @@ public class LessonItemRepository implements PanacheRepository<LessonItemDomain>
   public Stream<LessonItemDomain> getCourseLessons(Long courseId, Integer pageNumber) {
     currentPage = pageNumber;
     PanacheQuery<LessonItemDomain> queryResult =
-      find("course.id = ?1", courseId).page(pageNumber, LESSON_ITEMS_COUNT_PER_PAGE);
+      find("course.id = ?1", Sort.ascending("startsAt") ,courseId).page(pageNumber, LESSON_ITEMS_COUNT_PER_PAGE);
 
     totalPageNumber = queryResult.pageCount();
     totalElementsCount = queryResult.count();
