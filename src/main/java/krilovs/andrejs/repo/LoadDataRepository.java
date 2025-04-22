@@ -3,28 +3,38 @@ package krilovs.andrejs.repo;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import krilovs.andrejs.domain.CourseItemDomain;
+import krilovs.andrejs.domain.LessonItemDomain;
 import krilovs.andrejs.domain.UserDomain;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.Random;
 
 @ApplicationScoped
 public class LoadDataRepository {
   private static final int TOTAL_FAKE_COURSE_ITEMS = 18;
+  private static final int TOTAL_FAKE_LESSONS_PER_COURSE = 20;
+
+  @Inject
+  LessonItemRepository lessonItemRepository;
 
   @Inject
   CourseItemRepository courseItemRepository;
 
   @Inject
   UserRepository userRepository;
+  Random random = new Random();
 
   @Transactional
   public void initFakeCourses() {
     courseItemRepository.deleteAll();
-    Random random = new Random();
+    courseItemRepository.deleteAll();
 
     for (int courseIdentifier = 0; courseIdentifier < TOTAL_FAKE_COURSE_ITEMS; courseIdentifier++) {
       long beginDate = LocalDate.now().toEpochDay();
@@ -40,6 +50,7 @@ public class LoadDataRepository {
 
   @Transactional
   public void initFakeUsers() {
+    userRepository.deleteAll();
     UserDomain adminUser = new UserDomain();
     adminUser.setLogin("admin");
     adminUser.setPassword(BcryptUtil.bcryptHash("admin"));
@@ -63,5 +74,26 @@ public class LoadDataRepository {
     lecturer.setSurname("Surname");
     lecturer.setRole("lecturer");
     userRepository.persist(lecturer);
+  }
+
+  @Transactional
+  public void initFakeLessons() {
+    lessonItemRepository.deleteAll();
+    for (CourseItemDomain course: courseItemRepository.findAll().list()) {
+      for (long lessonIdentifier = 0; lessonIdentifier < TOTAL_FAKE_LESSONS_PER_COURSE; lessonIdentifier++) {
+        long beginDate = course.getStartDate().toEpochSecond(LocalTime.of(0,0), ZoneOffset.ofHours(2));
+        long endDate = LocalDateTime.now().plusYears(1L).toEpochSecond(ZoneOffset.ofHours(2));
+        LocalDateTime generatedDate = LocalDateTime.ofEpochSecond(
+          random.nextLong(beginDate, endDate), 0, ZoneOffset.ofHours(2)
+        );
+
+        LessonItemDomain lesson = new LessonItemDomain();
+        lesson.setName("Lesson %d for course %d".formatted(lessonIdentifier, course.getId()));
+        lesson.setCourse(course);
+        lesson.setStartsAt(generatedDate);
+        lesson.setLecturer(userRepository.findById("lecturer", LockModeType.OPTIMISTIC));
+        lessonItemRepository.persist(lesson);
+      }
+    }
   }
 }

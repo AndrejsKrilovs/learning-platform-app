@@ -8,7 +8,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import krilovs.andrejs.domain.UserDomain;
-import krilovs.andrejs.exception.UserException;
 import krilovs.andrejs.request.LoginRequest;
 import krilovs.andrejs.service.UserService;
 
@@ -17,8 +16,9 @@ import java.util.List;
 @Path("/users")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserResource {
+
   @Inject
-  private UserService userService;
+  UserService userService;
 
   @POST
   @Path("/login")

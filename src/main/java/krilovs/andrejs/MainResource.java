@@ -1,7 +1,6 @@
 package krilovs.andrejs;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import krilovs.andrejs.repo.LoadDataRepository;
@@ -12,7 +11,7 @@ public class MainResource {
   @Inject
   LoadDataRepository loadDataRepository;
 
-  @GET
+  @POST
   @Path("/loadCourses")
   public String initCourseData() {
     loadDataRepository.initFakeCourses();
@@ -24,5 +23,12 @@ public class MainResource {
   public String initUsers() {
     loadDataRepository.initFakeUsers();
     return "Users loaded";
+  }
+
+  @POST
+  @Path("/loadLessons")
+  public String initLessons() {
+    loadDataRepository.initFakeLessons();
+    return "Lessons loaded";
   }
 }

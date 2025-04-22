@@ -1,77 +1,38 @@
 package krilovs.andrejs.repo;
 
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import krilovs.andrejs.domain.CourseItemDomain;
 import krilovs.andrejs.domain.LessonItemDomain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
-/**
- * Refactor this class after database implementation
- */
 @ApplicationScoped
-public class LessonItemRepository {
-  private static final int TOTAL_FAKE_LESSONS_PER_COURSE = 20;
-  private final List<LessonItemDomain> userLessonItems;
-  private List<LessonItemDomain> lessonsForSelectedCourse;
-  private final AtomicLong lessonId;
-  private final CourseItemRepository courseItemRepository;
+public class LessonItemRepository implements PanacheRepository<LessonItemDomain> {
+  private final static int LESSON_ITEMS_COUNT_PER_PAGE = 10;
+  private int totalPageNumber;
+  private int currentPage;
+  private long totalElementsCount;
 
-  public LessonItemRepository() {
-    this.lessonId = new AtomicLong();
-    this.courseItemRepository = new CourseItemRepository();
-    this.userLessonItems = new CopyOnWriteArrayList<>();
-    this.lessonsForSelectedCourse = new CopyOnWriteArrayList<>();
-    initFakeLessons();
+  public Stream<LessonItemDomain> getCourseLessons(Long courseId, Integer pageNumber) {
+    currentPage = pageNumber;
+    PanacheQuery<LessonItemDomain> queryResult =
+      find("course.id = ?1", courseId).page(pageNumber, LESSON_ITEMS_COUNT_PER_PAGE);
+
+    totalPageNumber = queryResult.pageCount();
+    totalElementsCount = queryResult.count();
+    return queryResult.stream();
   }
 
-  public List<LessonItemDomain> getLessonsForCourse(Long courseId) {
-    lessonsForSelectedCourse = userLessonItems.stream()
-      .filter(lesson -> courseId.equals(lesson.getCourse().getId()))
-      .sorted(Comparator.comparing(LessonItemDomain::getStartsAt))
-      .toList();
-
-    return lessonsForSelectedCourse;
+  public int getTotalPageNumber() {
+    return totalPageNumber;
   }
 
-  public boolean addLesson(LessonItemDomain item) {
-    item.setId(lessonId.getAndIncrement());
-    return userLessonItems.add(item);
+  public int getCurrentPage() {
+    return currentPage;
   }
 
-  public Integer totalElementsCount() {
-    return lessonsForSelectedCourse.size();
-  }
-
-  private void initFakeLessons() {
-    Random random = new Random();
-    int totalCourseCount = (int) courseItemRepository.count();
-
-    for (long courseIdentifier = 0; courseIdentifier < totalCourseCount; courseIdentifier++) {
-      for (long lessonIdentifier = 0; lessonIdentifier < TOTAL_FAKE_LESSONS_PER_COURSE; lessonIdentifier++) {
-        LessonItemDomain item = new LessonItemDomain();
-        CourseItemDomain course = courseItemRepository
-          .findByIdOptional(courseIdentifier)
-          .orElse(new CourseItemDomain());
-        long beginDate = Objects.requireNonNullElse(course.getStartDate(), LocalDate.now())
-          .toEpochSecond(LocalTime.of(0,0), ZoneOffset.ofHours(2));
-        long endDate = LocalDateTime.now().plusYears(1L).toEpochSecond(ZoneOffset.ofHours(2));
-
-        item.setName("Lesson %d for course %d".formatted(lessonIdentifier, courseIdentifier));
-        item.setCourse(course);
-        item.setLecturer("Name Surname");
-        item.setStartsAt(LocalDateTime.ofEpochSecond(random.nextLong(beginDate, endDate), 0, ZoneOffset.ofHours(2)));
-        addLesson(item);
-      }
-    }
+  public long getTotalElementsCount() {
+    return totalElementsCount;
   }
 }
