@@ -25,7 +25,8 @@ public class LessonResource {
                                                      @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
     return Map.of(
       "lessons", lessonService.showLessonsForSelectedCourse(courseId, pageNumber),
-      "metadata", lessonService.getLessonRequestMetadata()
+      "metadata", lessonService.getLessonRequestMetadata(),
+      "headers", lessonService.getMainFieldNames()
     );
   }
 }

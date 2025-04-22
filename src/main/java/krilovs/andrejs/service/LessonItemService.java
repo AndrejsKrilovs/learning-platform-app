@@ -7,9 +7,12 @@ import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.repo.LessonItemRepository;
 import krilovs.andrejs.request.LessonResponse;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class LessonItemService {
@@ -41,5 +44,18 @@ public class LessonItemService {
       entity.getName(),
       entity.getStartsAt(),
       "%s %s".formatted(lecturer.getName(), lecturer.getSurname()));
+  }
+
+  public List<String> getMainFieldNames() {
+    return Stream.of(LessonItemDomain.class.getDeclaredFields())
+      .map(Field::getName)
+      .filter(excludeFields())
+      .toList();
+  }
+
+  private Predicate<String> excludeFields() {
+    return field -> !field.contains("$") &&
+      !field.equalsIgnoreCase("LESSON_ITEM_SEQUENCE") &&
+      !field.equalsIgnoreCase("version");
   }
 }
