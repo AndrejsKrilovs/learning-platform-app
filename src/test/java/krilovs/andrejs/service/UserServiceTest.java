@@ -59,7 +59,7 @@ class UserServiceTest {
   @Test
   void registerDuplicateUser() {
     Mockito.when(userRepository.findByIdOptional(Mockito.anyString(), Mockito.any()))
-      .thenReturn(Optional.of(new UserDomain()));
+      .thenReturn(Optional.of(generateTestUser()));
 
     UserException registeredResult = Assertions.assertThrows(
       UserException.class, () -> userService.registerUser(generateTestUser())

@@ -43,7 +43,7 @@ class LessonItemServiceTest {
       .thenReturn(Stream.of(generateValidLesson()));
 
     CourseException incorrectCourse = Assertions.assertThrows(
-      CourseException.class, () -> lessonItemService.showLessonsForSelectedCourse(Long.MIN_VALUE, Mockito.anyInt())
+      CourseException.class, () -> lessonItemService.showLessonsForSelectedCourse(Long.MIN_VALUE, Integer.MAX_VALUE)
     );
     Assertions.assertEquals("Cannot take lessons for course item with negative identifier", incorrectCourse.getMessage());
   }
