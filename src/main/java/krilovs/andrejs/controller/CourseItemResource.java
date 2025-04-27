@@ -1,4 +1,4 @@
-package krilovs.andrejs;
+package krilovs.andrejs.controller;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
