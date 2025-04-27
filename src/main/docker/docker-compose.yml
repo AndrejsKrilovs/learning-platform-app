@@ -15,6 +15,7 @@ services:
       - ../../database:/var/lib/postgresql
 
   pgadmin:
+    container_name: postgres_pg_admin_container
     image: dpage/pgadmin4
     restart: always
     environment:
