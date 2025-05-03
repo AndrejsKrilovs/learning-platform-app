@@ -6,7 +6,7 @@ import krilovs.andrejs.domain.LessonItemDomain;
 import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.exception.CourseException;
 import krilovs.andrejs.repo.LessonItemRepository;
-import krilovs.andrejs.request.LessonResponse;
+import krilovs.andrejs.dto.LessonDto;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -31,7 +31,7 @@ public class LessonItemService {
     );
   }
 
-  public List<LessonResponse> showLessonsForSelectedCourse(Long courseId, Integer pageNumber) {
+  public List<LessonDto> showLessonsForSelectedCourse(Long courseId, Integer pageNumber) {
     if (courseId <= 0) {
       throw new CourseException(
         "Incorrect course exception",
@@ -46,9 +46,9 @@ public class LessonItemService {
       .toList();
   }
 
-  private LessonResponse mapLessonResponse(LessonItemDomain entity) {
+  private LessonDto mapLessonResponse(LessonItemDomain entity) {
     UserDomain lecturer = entity.getLecturer();
-    return new LessonResponse(
+    return new LessonDto(
       entity.getId(),
       entity.getName(),
       entity.getStartsAt(),

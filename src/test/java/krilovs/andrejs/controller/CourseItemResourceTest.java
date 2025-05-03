@@ -68,7 +68,7 @@ class CourseItemResourceTest {
     );
 
     List<Map<String, String>> violationResponse = List.of(
-      Map.of("field", "addCourseItem.courseItem.label", "message", "Course item should be defined")
+      Map.of("field", "add.item.label", "message", "Course item should be defined")
     );
 
     RestAssured.given()

@@ -1,4 +1,4 @@
-package krilovs.andrejs.request;
+package krilovs.andrejs.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

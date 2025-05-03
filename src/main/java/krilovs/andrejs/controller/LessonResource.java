@@ -5,16 +5,14 @@ import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
+import krilovs.andrejs.dto.LessonDto;
 import krilovs.andrejs.service.LessonItemService;
 
 import java.util.Map;
 
 @Path("/lessons")
-@Produces(MediaType.APPLICATION_JSON)
-public class LessonResource {
+public class LessonResource extends AbstractController<LessonDto> {
 
   @Inject
   LessonItemService lessonService;
@@ -23,10 +21,30 @@ public class LessonResource {
   @Path("/take/{courseId}")
   public Map<String, ?> showLessonsForSelectedCourse(@PathParam("courseId") Long courseId,
                                                      @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
-    return Map.of(
-      "lessons", lessonService.showLessonsForSelectedCourse(courseId, pageNumber),
-      "metadata", lessonService.getLessonRequestMetadata(),
-      "headers", lessonService.getMainFieldNames()
+    return showGetResponse(
+      lessonService.showLessonsForSelectedCourse(courseId, pageNumber),
+      lessonService.getMainFieldNames(),
+      lessonService.getLessonRequestMetadata()
     );
+  }
+
+  @Override
+  public LessonDto findById(Long id) {
+    throw new RuntimeException("LessonResource.findById not implemented yet");
+  }
+
+  @Override
+  public LessonDto add(LessonDto item) {
+    throw new RuntimeException("LessonResource.add not implemented yet");
+  }
+
+  @Override
+  public LessonDto modify(LessonDto item) {
+    throw new RuntimeException("LessonResource.modify not implemented yet");
+  }
+
+  @Override
+  public void remove(Long id) {
+    throw new RuntimeException("LessonResource.remove not implemented yet");
   }
 }

@@ -10,52 +10,53 @@ import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
-import jakarta.ws.rs.core.MediaType;
 import krilovs.andrejs.domain.CourseItemDomain;
 import krilovs.andrejs.service.CourseItemService;
 
 import java.util.Map;
 
 @Path("/courseItems")
-@Produces(MediaType.APPLICATION_JSON)
-public class CourseItemResource {
+public class CourseItemResource extends AbstractController<CourseItemDomain> {
 
   @Inject
-  private CourseItemService service;
+  CourseItemService service;
 
   @GET
   public Map<String, ?> getCourseItems(@HeaderParam("username") String username,
                                        @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
-    return Map.of(
-      "items", service.getItems(username, pageNumber),
-      "headers", service.getMainFieldNames(),
-      "metadata", service.getAvailableCoursesRequestMetadata()
+    return showGetResponse(
+      service.getItems(username, pageNumber),
+      service.getMainFieldNames(),
+      service.getAvailableCoursesRequestMetadata()
     );
   }
 
   @GET
   @Path("/{id}")
-  public CourseItemDomain findCourseById(@PathParam("id") Long itemId) {
+  @Override
+  public CourseItemDomain findById(@PathParam("id") Long itemId) {
     return service.findItemById(itemId);
   }
 
   @POST
   @Path("/add")
-  public CourseItemDomain addCourseItem(@Valid CourseItemDomain courseItem) {
+  @Override
+  public CourseItemDomain add(@Valid CourseItemDomain courseItem) {
     return service.addOrModifyItem(courseItem);
   }
 
   @PATCH
   @Path("/update")
-  public CourseItemDomain modifyCourseItem(@Valid CourseItemDomain courseItem) {
+  @Override
+  public CourseItemDomain modify(@Valid CourseItemDomain courseItem) {
     return service.addOrModifyItem(courseItem);
   }
 
   @DELETE
+  @Override
   @Path("/remove/{id}")
-  public void removeCourseItem(@PathParam("id") Long itemId) {
+  public void remove(@PathParam("id") Long itemId) {
     service.removeItem(itemId);
   }
 
@@ -70,10 +71,10 @@ public class CourseItemResource {
   @Path("/userCourses")
   public Map<String, ?> getUserCourseItems(@HeaderParam("username") String username,
                                            @QueryParam("page") @DefaultValue("0") Integer pageNumber) {
-    return Map.of(
-      "items", service.getUserCourses(username, pageNumber),
-      "headers", service.getMainFieldNames(),
-      "metadata", service.getUserCoursesRequestMetadata()
+    return showGetResponse(
+      service.getUserCourses(username, pageNumber),
+      service.getMainFieldNames(),
+      service.getUserCoursesRequestMetadata()
     );
   }
 }

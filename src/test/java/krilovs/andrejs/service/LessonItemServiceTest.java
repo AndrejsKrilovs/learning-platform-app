@@ -8,7 +8,7 @@ import krilovs.andrejs.domain.LessonItemDomain;
 import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.exception.CourseException;
 import krilovs.andrejs.repo.LessonItemRepository;
-import krilovs.andrejs.request.LessonResponse;
+import krilovs.andrejs.dto.LessonDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +30,7 @@ class LessonItemServiceTest {
     Mockito.when(lessonItemRepository.getCourseLessons(Mockito.anyLong(), Mockito.anyInt()))
       .thenReturn(Stream.of(generateValidLesson()));
 
-    List<LessonResponse> resultList = lessonItemService.showLessonsForSelectedCourse(Long.MAX_VALUE, Integer.MAX_VALUE);
+    List<LessonDto> resultList = lessonItemService.showLessonsForSelectedCourse(Long.MAX_VALUE, Integer.MAX_VALUE);
     Assertions.assertFalse(resultList.isEmpty());
     Assertions.assertEquals(1L, resultList.getFirst().id());
     Assertions.assertEquals("Lesson name", resultList.getFirst().name());

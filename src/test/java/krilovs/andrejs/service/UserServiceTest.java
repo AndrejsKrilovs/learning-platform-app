@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.exception.UserException;
 import krilovs.andrejs.repo.UserRepository;
-import krilovs.andrejs.request.LoginRequest;
+import krilovs.andrejs.dto.LoginRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -8,7 +8,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import krilovs.andrejs.domain.UserDomain;
-import krilovs.andrejs.request.LoginRequest;
+import krilovs.andrejs.dto.LoginRequest;
 import krilovs.andrejs.service.UserService;
 
 import java.util.List;

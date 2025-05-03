@@ -8,7 +8,7 @@ import jakarta.validation.Valid;
 import krilovs.andrejs.domain.UserDomain;
 import krilovs.andrejs.exception.UserException;
 import krilovs.andrejs.repo.UserRepository;
-import krilovs.andrejs.request.LoginRequest;
+import krilovs.andrejs.dto.LoginRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
